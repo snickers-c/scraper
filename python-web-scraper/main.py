@@ -15,6 +15,7 @@ import csv
 #     except requests.exceptions.RequestException as e:
 #         print("Error fetching page:", e)
 #         return None
+#
     
 def get_product_names(url):
     try:
