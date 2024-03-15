@@ -69,23 +69,32 @@ if __name__ == "__main__":
     stringy = ""
     stringus = ""
     pocet = 0
+<<<<<<< HEAD
     # dkaowdawddawddawddd
     
     spodnahranica = input("Zadajte spodnu hranicu rozsahu ktoru chcete pozriet:")
     hornahranica = input("Zadajte hornu hranicu rozsahu ktoru chcete pozriet:")
     url = 'https://www.modelsnavigator.com/sk/modely-lietadiel?stav_skladu=1179&page='+spodnahranica+'-'+hornahranica+''
+=======
+    url = 'https://www.modelsnavigator.com/sk/modely-lietadiel?stav_skladu=1179&page=100-102'
+>>>>>>> 08e564415b5674f65fc2cbec37bfe87f90008ed3
     product_names = get_product_names(url)
     if product_names:
         print("Product Names:")
         for product_name in product_names:
             print("- ", product_name)
             stringus += search_product_by_name(product_name, stringy)
+<<<<<<< HEAD
             print("new line stringus",stringus)
+=======
+            # print("new line stringus",stringus)
+>>>>>>> 08e564415b5674f65fc2cbec37bfe87f90008ed3
     else:
         print("No product names found.")
     # print("vypis pola: " + stringus)
     
     for row in stringus.split("`"):
+<<<<<<< HEAD
         if row != "":
             ares = row.split("~")
             product_code = ares[0]
@@ -114,5 +123,34 @@ if __name__ == "__main__":
                     print("No product count found.")
             else:
                 print("No result found for product code", product_code)
+=======
+        ares = row.split("~")
+        product_code = ares[0]
+        if len(ares) > 1:
+            bxs = ares[1]
+        else:
+            print("ares does not have a second element")
+
+        # bxs = ares[1]
+        result = search_product_by_code(product_code)
+        if result:
+            product_count = extract_product_count(result)
+            print("\nSearch result for product code", product_code + " " + bxs + ":")
+            # data.append([product_code+";", bxs])
+            if product_count:
+                print("Number of products displayed:", product_count)
+                
+                if product_count == '0':
+                    data.append([product_code+";",bxs])
+                    pocet = pocet+1
+                    with open(filename, 'w', newline='') as csvfile:
+                        csvwriter = csv.writer(csvfile)
+                        csvwriter.writerows(data)
+                        
+            else:
+                print("No product count found.")
+        else:
+            print("No result found for product code", product_code)
+>>>>>>> 08e564415b5674f65fc2cbec37bfe87f90008ed3
     print('Do suboru bolo danich ' , pocet)
     input("Press any key to exit...")
