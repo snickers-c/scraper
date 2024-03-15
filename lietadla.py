@@ -69,7 +69,7 @@ if __name__ == "__main__":
     stringy = ""
     stringus = ""
     pocet = 0
-    # dkaowdawd
+    # dkaowdawddawd
     
     spodnahranica = input("Zadajte spodnu hranicu rozsahu ktoru chcete pozriet:")
     hornahranica = input("Zadajte hornu hranicu rozsahu ktoru chcete pozriet:")
