@@ -1,7 +1,11 @@
 from bs4 import BeautifulSoup
+# from tqdm import tqdm
 import requests
 import re
 import csv
+import progressbar
+import time
+import sys
 def get_product_names(url):
     try:
         response = requests.get(url)
@@ -70,22 +74,39 @@ if __name__ == "__main__":
     stringus = ""
     pocet = 0
     # dkaow
-    
+    print("""
+                 ____                       _  __       
+                / ___|  ___ _ __ __ _ _ __ (_)/ _|_   _ 
+                \___ \ / __| '__/ _` | '_ \| | |_| | | |
+                 ___) | (__| | | (_| | |_) | |  _| |_| |
+                |____/ \___|_|  \__,_| .__/|_|_|  \__, |
+                                     |_|          |___/ 
+
+            """)
     spodnahranica = input("Zadajte spodnu hranicu rozsahu ktoru chcete pozriet:")
     hornahranica = input("Zadajte hornu hranicu rozsahu ktoru chcete pozriet:")
     url = 'https://www.modelsnavigator.com/sk/modely-lietadiel?stav_skladu=1179&page='+spodnahranica+'-'+hornahranica+''
+    bar = progressbar.ProgressBar(maxval=100, \
+    widgets=[progressbar.Bar('=', '[', ']'), ' ', progressbar.Percentage()])
+    bar.start()
+    loading = ((int(hornahranica) - int(spodnahranica)) * 15) / 100
+    print("[",loading)
     product_names = get_product_names(url)
     if product_names:
         print("Product Names:")
         for product_name in product_names:
             print("- ", product_name)
             stringus += search_product_by_name(product_name, stringy)
-            print("new line stringus",stringus)
+            # print("new line stringus",stringus)
+            bar.update(0 + loading)
+            sys.stdout.flush()
     else:
         print("No product names found.")
     # print("vypis pola: " + stringus)
     
+    
     for row in stringus.split("`"):
+        bar.update(0 + loading)
         if row != "":
             ares = row.split("~")
             product_code = ares[0]
@@ -115,4 +136,5 @@ if __name__ == "__main__":
             else:
                 print("No result found for product code", product_code)
     print('Do suboru bolo danich ' , pocet)
+    bar.finish()
     input("Press any key to exit...")
