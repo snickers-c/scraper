@@ -68,7 +68,7 @@ def extract_product_count(html_content):
         return None
         
 if __name__ == "__main__":
-    data = [['objednavaci kod;', 'link na buxus']]
+    data = [['objednavaci kod', 'link na buxus']]
     filename = "vystup5.csv"
     stringy = ""
     stringus = ""
@@ -125,7 +125,7 @@ if __name__ == "__main__":
                     print("Number of products displayed:", product_count)
                     
                     if product_count == '0':
-                        data.append([product_code+";",bxs])
+                        data.append([product_code, bxs])
                         pocet = pocet+1
                         with open(filename, 'w', newline='') as csvfile:
                             csvwriter = csv.writer(csvfile)
