@@ -33,18 +33,24 @@ def search_product_by_name(product_name, arr ):
             if product_code_element:
                 product_code = product_code_element.find_next_sibling('td').text.strip()
                 tag= soup.find('a' ,id= "add_to_cart_button")               
-                href_value = tag['href']
-                buxus_id = href_value.split('product_id=')[1].split('&')[0]
-                arr += product_code + "~" + "https://www.modelsnavigator.com/buxus/system/page_details.php?page_id="+buxus_id + "#id9`"
-                # print("Product Code:", product_code)
-                return arr    
+                if tag:
+                    href_value = tag['href']
+                    buxus_id = href_value.split('product_id=')[1].split('&')[0]
+                    arr += product_code + "~" + "https://www.modelsnavigator.com/buxus/system/page_details.php?page_id="+buxus_id + "#id9`"
+                    # print("Product Code:", product_code)
+                    return arr
+                else:
+                    print("Add to cart button not found.")
+                    return ""
             else:
                 print("Product code not found.")
                 return ""
         else:
             print("Product not found:", product_name)
+            return ""
     except requests.exceptions.RequestException as e:
         print("Error searching for product:", e)
+        return ""
 
 def search_product_by_code(product_code):
     url = 'https://www.aviationmegastore.com/en/quicksearch/{}'.format(product_code)
@@ -69,7 +75,7 @@ def extract_product_count(html_content):
         
 if __name__ == "__main__":
     data = [['objednavaci kod', 'link na buxus']]
-    filename = "vystup5.csv"
+    filename = "vystup-vsetko.csv"
     stringy = ""
     stringus = ""
     pocet = 0
@@ -96,8 +102,9 @@ if __name__ == "__main__":
         print("Product Names:")
         for product_name in product_names:
             print("- ", product_name)
-            stringus += search_product_by_name(product_name, stringy)
-            # print("new line stringus",stringus)
+            result = search_product_by_name(product_name, stringy)
+            if result is not None:
+                stringus += result
             bar.update(0 + loading)
             sys.stdout.flush()
     else:
@@ -107,34 +114,34 @@ if __name__ == "__main__":
     
     for row in stringus.split("`"):
         bar.update(0 + loading)
-        if row != "":
+        if row:
             ares = row.split("~")
-            product_code = ares[0]
             if len(ares) > 1:
+                product_code = ares[0]
                 bxs = ares[1]
+                # bxs = ares[1]
+                result = search_product_by_code(product_code)
+                if result:
+                    product_count = extract_product_count(result)
+                    print("\nSearch result for product code", product_code + " " + bxs + ":")
+                    # data.append([product_code+";", bxs])
+                    if product_count:
+                        print("Number of products displayed:", product_count)
+                        if product_count == '0':
+                            data.append([product_code, bxs])
+                            pocet = pocet+1
+                            with open(filename, 'w', newline='') as csvfile:
+                                csvwriter = csv.writer(csvfile)
+                                csvwriter.writerows(data)
+                                
+                    else:
+                        print("No product count found.")
+                else:
+                    print("No result found for product code", product_code)
             else:
                 print("ares does not have a second element")
 
-            # bxs = ares[1]
-            result = search_product_by_code(product_code)
-            if result:
-                product_count = extract_product_count(result)
-                print("\nSearch result for product code", product_code + " " + bxs + ":")
-                # data.append([product_code+";", bxs])
-                if product_count:
-                    print("Number of products displayed:", product_count)
                     
-                    if product_count == '0':
-                        data.append([product_code, bxs])
-                        pocet = pocet+1
-                        with open(filename, 'w', newline='') as csvfile:
-                            csvwriter = csv.writer(csvfile)
-                            csvwriter.writerows(data)
-                            
-                else:
-                    print("No product count found.")
-            else:
-                print("No result found for product code", product_code)
     print('Do suboru bolo danich ' , pocet)
     bar.finish()
     input("Press any key to exit...")
